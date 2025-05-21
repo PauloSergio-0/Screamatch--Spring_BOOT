@@ -1,5 +1,6 @@
 package br.com.oracleone.ScreamMatch;
 
+import br.com.oracleone.ScreamMatch.service.ConsumoApi;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,11 @@ public class ScreammatchApplication implements CommandLineRunner {
 
 	@Override //metodo main comum
 	public void run(String... args) throws Exception {
-		System.out.println("Primeiro projeto spring sem WEB test");
+
+		var consumoApi = new ConsumoApi();
+		var json = consumoApi.obterDados("http://www.omdbapi.com/?apikey=308478da&t=peaky_blinders");
+
+
+	System.out.println(json);
 	}
 }
