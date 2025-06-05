@@ -21,9 +21,12 @@ public class Principal {
     private String json;
     private DadosSerie dadosSerie;
     private String serie;
+    private ArrayList<DadosTemporada> temporadas;
+    private List<Episodio> episodios;
 
     public void menu() {
         buscarSerie();
+        detalhesEps();
 
 
 
@@ -67,14 +70,14 @@ public class Principal {
     }
 
     private void detalhesEps(){
-        ArrayList<DadosTemporada> temporadas = new ArrayList<>();
+        temporadas = new ArrayList<>();
         for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
 
             json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie + "&season=" + i);
             DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
             temporadas.add(dadosTemporada);
         }
-        List<Episodio> episodios = temporadas.stream()
+        episodios = temporadas.stream()
                 .flatMap(t -> t.episodios().stream()
                         .map(d -> new Episodio(t.numeroTemp(), d)))
                 .collect(Collectors.toList());
