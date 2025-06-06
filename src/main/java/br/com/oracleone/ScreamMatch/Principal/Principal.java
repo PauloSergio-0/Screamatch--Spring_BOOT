@@ -80,8 +80,6 @@ public class Principal {
     }
 
     private void buscarSerie(){
-
-        System.out.println("Teste de busca");
         System.out.println("Digite uma serie: ");
         String serie = scanner.nextLine().trim().toLowerCase().replace(" ", "_");
 
@@ -111,6 +109,8 @@ public class Principal {
                             .map(d -> new Episodio(t.numeroTemp(), d)))
                     .collect(Collectors.toList());
 
+
+            System.out.println("Série: " + dadosSerie.titulos());
             episodios.forEach(System.out::println);
         } else {
             System.out.println("Não existe série");

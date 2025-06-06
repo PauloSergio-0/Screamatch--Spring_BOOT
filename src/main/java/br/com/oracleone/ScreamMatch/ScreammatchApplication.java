@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 @SpringBootApplication
 public class ScreammatchApplication implements CommandLineRunner {
-	private Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
 
 	public static void main(String[] args) {
 		SpringApplication.run(ScreammatchApplication.class, args);
@@ -20,6 +19,7 @@ public class ScreammatchApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		Principal principal = new Principal();
 		principal.menu();
+
 
 //		ArrayList<DadosTemporada> temporadas = new ArrayList<>();
 //		for(int i = 1; i <= dadosSerie.totalTemporadas(); i++){
