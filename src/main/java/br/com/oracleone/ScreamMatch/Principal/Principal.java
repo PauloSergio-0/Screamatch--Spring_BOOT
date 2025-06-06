@@ -19,24 +19,48 @@ public class Principal {
     private final ConsumoApi consumoApi = new ConsumoApi();
     private final ConverteDados conversor = new ConverteDados();
     private String json;
-    private DadosSerie dadosSerie;
+    private List<DadosSerie> listaSerie = new ArrayList<>();
     private String serie;
-    private ArrayList<DadosTemporada> temporadas;
+    private ArrayList<DadosTemporada> temporadas = new ArrayList<>();
     private List<Episodio> episodios;
 
     public void menu() {
-        buscarSerie();
-        detalhesEps();
+
+        while (true){
+            System.out.println("""
+                    1. Buscar Série
+                    2. Buscar Episodio
+                    3. Listar series
+                    0. Sair
+                    """);
+
+            int opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            if (opcao == 0){
+                System.out.println("Saindo......");
+                break;
+            } else if (opcao == 1) {
+                buscarSerie();
+            } else if (opcao == 2) {
+                listaSerie.forEach(this::detalhesEps);
+            } else if (opcao == 3) {
+                listarSeries();
+            } else {
+                System.out.println("Nenhua opção encontrada!");
+            }
+
+        }
 
 
 
 
 
-        topNSerie(temporadas);
-        buscarTituloEps(episodios);
-        avaliacoesTemporadas(episodios);
-        filtroData(episodios);
-        ordenarNomes();
+//        topNSerie(temporadas);
+//        buscarTituloEps(episodios);
+//        avaliacoesTemporadas(episodios);
+//        filtroData(episodios);
+//        ordenarNomes();
 
         //temporadas.forEach(System.out::println);
 
@@ -59,28 +83,43 @@ public class Principal {
 
         System.out.println("Teste de busca");
         System.out.println("Digite uma serie: ");
-        serie = scanner.nextLine().trim().toLowerCase().replace(" ", "_");
+        String serie = scanner.nextLine().trim().toLowerCase().replace(" ", "_");
 
         json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie);
-        dadosSerie = conversor.obterDados(json, DadosSerie.class);
-        System.out.println(dadosSerie);
-        json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie + "&season=" + 1 + "&episode=1");
+        DadosSerie serieData = conversor.obterDados(json, DadosSerie.class);
+        System.out.println(serieData);
+        listaSerie.add(serieData);
+
+//        json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie + "&season=" + 1 + "&episode=1");
 //        DadosEpisodio dadosEpisodio = conversor.obterDados(json, DadosEpisodio.class);
 //        System.out.println(dadosEpisodio);
     }
 
-    private void detalhesEps(){
-        temporadas = new ArrayList<>();
-        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
+    private void detalhesEps(DadosSerie dadosSerie){
 
-            json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie + "&season=" + i);
-            DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
-            temporadas.add(dadosTemporada);
+        if(!(dadosSerie ==null)) {
+
+            temporadas = new ArrayList<>();
+            for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
+
+                json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + dadosSerie.titulos().toLowerCase().replace(" ", "_").trim() + "&season=" + i);
+                DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
+                temporadas.add(dadosTemporada);
+            }
+            episodios = temporadas.stream()
+                    .flatMap(t -> t.episodios().stream()
+                            .map(d -> new Episodio(t.numeroTemp(), d)))
+                    .collect(Collectors.toList());
+
+            episodios.forEach(System.out::println);
+        } else {
+            System.out.println("Não existe série");
         }
-        episodios = temporadas.stream()
-                .flatMap(t -> t.episodios().stream()
-                        .map(d -> new Episodio(t.numeroTemp(), d)))
-                .collect(Collectors.toList());
+    }
+
+    private void listarSeries(){
+
+        listaSerie.forEach(System.out::println);
     }
 
 
