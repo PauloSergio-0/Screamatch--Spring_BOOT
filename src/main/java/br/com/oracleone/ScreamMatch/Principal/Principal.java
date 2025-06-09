@@ -1,9 +1,6 @@
 package br.com.oracleone.ScreamMatch.Principal;
 
-import br.com.oracleone.ScreamMatch.model.DadosEpisodio;
-import br.com.oracleone.ScreamMatch.model.DadosSerie;
-import br.com.oracleone.ScreamMatch.model.DadosTemporada;
-import br.com.oracleone.ScreamMatch.model.Episodio;
+import br.com.oracleone.ScreamMatch.model.*;
 import br.com.oracleone.ScreamMatch.service.ConsumoApi;
 import br.com.oracleone.ScreamMatch.service.ConverteDados;
 
@@ -19,7 +16,7 @@ public class Principal {
     private final ConsumoApi consumoApi = new ConsumoApi();
     private final ConverteDados conversor = new ConverteDados();
     private String json;
-    private List<DadosSerie> listaSerie = new ArrayList<>();
+    private List<DadosSerie> dadosSerie = new ArrayList<>();
     private String serie;
     private ArrayList<DadosTemporada> temporadas = new ArrayList<>();
     private List<Episodio> episodios;
@@ -43,7 +40,7 @@ public class Principal {
             } else if (opcao == 1) {
                 buscarSerie();
             } else if (opcao == 2) {
-                listaSerie.forEach(this::detalhesEps);
+                dadosSerie.forEach(this::detalhesEps);
             } else if (opcao == 3) {
                 listarSeries();
             } else {
@@ -86,7 +83,7 @@ public class Principal {
         json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie);
         DadosSerie serieData = conversor.obterDados(json, DadosSerie.class);
         System.out.println(serieData);
-        listaSerie.add(serieData);
+        dadosSerie.add(serieData);
 
 //        json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie + "&season=" + 1 + "&episode=1");
 //        DadosEpisodio dadosEpisodio = conversor.obterDados(json, DadosEpisodio.class);
@@ -118,8 +115,14 @@ public class Principal {
     }
 
     private void listarSeries(){
+        List<Serie> series = new ArrayList<>();
+        series = dadosSerie.stream()
+                        .map(ds -> new Serie(ds))
+                        .toList();
 
-        listaSerie.forEach(System.out::println);
+        series.stream()
+                .sorted(Comparator.comparing(Serie::getGenero))
+                .forEach(System.out::println);
     }
 
 
