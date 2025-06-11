@@ -3,6 +3,8 @@ package br.com.oracleone.ScreamMatch.model;
 import br.com.oracleone.ScreamMatch.service.ConsultaMyMemory;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalDouble;
 
 @Entity
@@ -25,6 +27,10 @@ public class Serie {
     @Column(name = "SINOPSE_SERIE")
     private String sinopse;
     private String poster;
+
+    @Transient
+    @Column(name = "EPISODIO_SERIE")
+    private List<Episodio> episodios = new ArrayList<>();
 
     public Serie(DadosSerie dadosSerie){
         try{
@@ -102,6 +108,14 @@ public class Serie {
 
     public void setPoster(String poster) {
         this.poster = poster;
+    }
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        this.episodios = episodios;
     }
 
     @Override

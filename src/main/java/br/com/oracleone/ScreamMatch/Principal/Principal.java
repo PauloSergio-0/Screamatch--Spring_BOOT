@@ -1,8 +1,10 @@
 package br.com.oracleone.ScreamMatch.Principal;
 
 import br.com.oracleone.ScreamMatch.model.*;
+import br.com.oracleone.ScreamMatch.repository.SerieRepository;
 import br.com.oracleone.ScreamMatch.service.ConsumoApi;
 import br.com.oracleone.ScreamMatch.service.ConverteDados;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +22,12 @@ public class Principal {
     private String serie;
     private ArrayList<DadosTemporada> temporadas = new ArrayList<>();
     private List<Episodio> episodios;
+    private SerieRepository repositorio;
+
+
+    public Principal(SerieRepository repositorio){
+        this.repositorio = repositorio;
+    }
 
     public void menu() {
 
@@ -78,10 +86,12 @@ public class Principal {
 
     private void buscarSerie(){
         System.out.println("Digite uma serie: ");
-        String serie = scanner.nextLine().trim().toLowerCase().replace(" ", "_");
+        String serieBusca = scanner.nextLine().trim().toLowerCase().replace(" ", "_");
 
-        json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serie);
+        json = consumoApi.obterDados(url + "/?" + "apikey=" + apiKey + "&t=" + serieBusca);
         DadosSerie serieData = conversor.obterDados(json, DadosSerie.class);
+        Serie serie =new Serie(serieData);
+        repositorio.save(serie);
         System.out.println(serieData);
         dadosSerie.add(serieData);
 
