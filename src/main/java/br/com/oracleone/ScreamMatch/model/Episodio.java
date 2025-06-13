@@ -1,14 +1,26 @@
 package br.com.oracleone.ScreamMatch.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.ManyToAny;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+@Entity
+@Table(name = "episodios")
 public class Episodio {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Integer temporada;
     private String titulo;
     private Integer numeroEp;
     private double avaliacao;
     private LocalDate dataLancamento;
+
+    @ManyToOne
+    private Serie serie;
 
     @Override
     public String toString() {
@@ -20,6 +32,8 @@ public class Episodio {
                 ", dataLancamento=" + dataLancamento +
                 '}';
     }
+
+    public Episodio(){}
 
     public Episodio(Integer temporada, DadosEpisodio e) {
         this.temporada = temporada;
@@ -78,5 +92,21 @@ public class Episodio {
 
     public void setDataLancamento(LocalDate dataLancamento) {
         this.dataLancamento = dataLancamento;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Serie getSerie() {
+        return serie;
+    }
+
+    public void setSerie(Serie serie) {
+        this.serie = serie;
     }
 }
