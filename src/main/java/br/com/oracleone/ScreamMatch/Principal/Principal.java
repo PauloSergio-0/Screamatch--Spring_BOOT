@@ -4,7 +4,6 @@ import br.com.oracleone.ScreamMatch.model.*;
 import br.com.oracleone.ScreamMatch.repository.SerieRepository;
 import br.com.oracleone.ScreamMatch.service.ConsumoApi;
 import br.com.oracleone.ScreamMatch.service.ConverteDados;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +37,9 @@ public class Principal {
                     2. Buscar Episodio
                     3. Listar series
                     4. Buscar Serie por titulo
+                    5. Buscar Serie por ator
+                    6. Top 5 Series
+                    7. Buscar Serie por catecoria
                     0. Sair
                     """);
 
@@ -54,7 +56,13 @@ public class Principal {
             } else if (opcao == 3) {
                 listarSeries();
             } else if (opcao == 4){
-                buscarSeriePorTitulol();
+                buscarSeriePorTitulo();
+            } else if (opcao == 5){
+                buscarSeriePorAtor();
+            } else if (opcao == 6){
+                buscarTop5Series();
+            } else if (opcao == 7){
+                buscarCategoria();
             } else {
                 System.out.println("Nenhua opção encontrada!");
             }
@@ -88,7 +96,37 @@ public class Principal {
 
     }
 
-    private void buscarSeriePorTitulol() {
+    private void buscarCategoria() {
+        System.out.println("Escolha um genero");
+        String genero =scanner.nextLine();
+
+        Categoria categoria =Categoria.fromPortugues(genero);
+        List<Serie> categoriaBuscada = repositorio.findByGenero(categoria);
+        System.out.println("Séries da categoria: "+ categoriaBuscada);
+
+        categoriaBuscada.forEach(s -> System.out.println("Nome serie: "+s.getTitulos() + " | Avaliação: "+ s.getAvaliacao()));
+    }
+
+    private void buscarTop5Series() {
+        List<Serie> top5series = repositorio.findTop5ByOrderByAvaliacaoDesc();
+        System.out.println("Top 5 Series");
+        top5series.forEach(s -> System.out.println("Nome serie: "+s.getTitulos() + " | Avaliação: "+ s.getAvaliacao()));
+    }
+
+    private void buscarSeriePorAtor() {
+        System.out.println("Digite o nome do ator");
+        String nomeAtor = scanner.nextLine();
+
+        System.out.println("Avalicao minima");
+        double avalicao = scanner.nextDouble();
+        List<Serie> seriesEncontrdas = repositorio.findByAtoresContainingIgnoreCaseAndAvaliacaoGreaterThanEqual(nomeAtor, avalicao);
+        System.out.println("O ator "+nomeAtor+" trabalhou na(s) serie(s).");
+        seriesEncontrdas.forEach(s -> System.out.println("Nome serie: "+s.getTitulos() + " | Avaliação: "+ s.getAvaliacao()));
+
+
+    }
+
+    private void buscarSeriePorTitulo() {
         System.out.println("Digite uma serie: ");
         String serieBusca = scanner.nextLine().trim();
 
