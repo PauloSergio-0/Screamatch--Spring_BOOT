@@ -4,6 +4,7 @@ import br.com.oracleone.ScreamMatch.model.*;
 import br.com.oracleone.ScreamMatch.repository.SerieRepository;
 import br.com.oracleone.ScreamMatch.service.ConsumoApi;
 import br.com.oracleone.ScreamMatch.service.ConverteDados;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +41,8 @@ public class Principal {
                     5. Buscar Serie por ator
                     6. Top 5 Series
                     7. Buscar Serie por catecoria
+                    8. Listar Series por temporada e avaliação
+                    9. Buscar Episodio portrecho
                     0. Sair
                     """);
 
@@ -63,6 +66,11 @@ public class Principal {
                 buscarTop5Series();
             } else if (opcao == 7){
                 buscarCategoria();
+            } else if (opcao == 8){
+                listarSeriesPorTemp();
+            }else if (opcao == 9){
+                buscarEpsodioporTrecho();
+
             } else {
                 System.out.println("Nenhua opção encontrada!");
             }
@@ -93,6 +101,37 @@ public class Principal {
 //                forEach(e -> System.out.println(e.titulo())));
 
         //temporadas.forEach(System.out::println);
+
+    }
+
+    private void buscarEpsodioporTrecho() {
+
+        System.out.println("Digite o nome do episodio para busca: ");
+        String epBusca = scanner.nextLine().trim();
+        List<Episodio> epsEncontrados = repositorio.epsiodioPorTrecho(epBusca);
+
+        epsEncontrados.forEach(e ->
+                System.out.printf("Serie: %s | Temporada: %d | NumEP: %d | Episodio: %s\n",
+                e.getSerie().getTitulos(),
+                e.getTemporada(),
+                e.getNumeroEp(),
+                e.getTitulo()
+            )
+                );
+    }
+
+    private void listarSeriesPorTemp() {
+        System.out.println("Qual o minino de tempotaradas: ");
+        Integer temp = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Qual o minimo de avaliacao");
+        double ava = scanner.nextDouble();
+        scanner.nextLine();
+
+
+        List<Serie> series = repositorio.seriePorTempAva(temp,ava);
+        System.out.println("Series");
+        series.forEach(s -> System.out.println("Nome serie: "+s.getTitulos() + " | Avaliação: "+ s.getAvaliacao()));
 
     }
 
